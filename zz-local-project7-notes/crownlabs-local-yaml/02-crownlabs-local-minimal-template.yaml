@@ -1,0 +1,25 @@
+apiVersion: crownlabs.polito.it/v1alpha2
+kind: Template
+metadata:
+  name: green-tea
+  namespace: workspace-tea
+spec:
+  prettyName: Green Tea
+  description: Minimal template for test
+  environmentList:
+    - name: greentea1
+      environmentType: Standalone
+      image: traefik/whoami:v1.10.1
+      guiEnabled: false
+      mountMyDriveVolume: false
+      rewriteURL: true
+      containerStartupOptions:
+        startupArgs:
+          - "--port"
+          - "6080"
+      resources:
+        cpu: 1
+        memory: 512Mi
+        reservedCPUPercentage: 25
+  workspace.crownlabs.polito.it/WorkspaceRef:
+    name: tea

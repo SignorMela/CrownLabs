@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: crownlabs-gw
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: envoy-gateway
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: crownlabs.polito.it
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: crownlabs-certificate
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              crownlabs.polito.it/gateway-route: "true"

@@ -1,0 +1,12 @@
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: p7-gateway-pool
+spec:
+  blocks:
+    - start: 172.23.22.240
+      stop: 172.23.22.250
+  serviceSelector:
+    matchLabels:
+      gateway.envoyproxy.io/owning-gateway-name: p7-gw
+      gateway.envoyproxy.io/owning-gateway-namespace: p7-demo

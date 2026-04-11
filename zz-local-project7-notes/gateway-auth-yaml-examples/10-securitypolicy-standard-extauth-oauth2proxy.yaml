@@ -1,0 +1,28 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: standard-extauth-policy
+  namespace: p7-demo
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: standard-gui-route
+  extAuth:
+    failOpen: false
+    headersToExtAuth:
+      - authorization
+      - cookie
+      - x-forwarded-proto
+      - x-forwarded-host
+      - x-forwarded-uri
+    http:
+      backendRefs:
+        - name: crownlabs-instances-auth-oauth2-proxy
+          namespace: crownlabs-instances-auth
+          port: 80
+      path: /app/instances/oauth2/auth
+      headersToBackend:
+        - x-auth-request-user
+        - x-auth-request-email
+        - x-auth-request-groups

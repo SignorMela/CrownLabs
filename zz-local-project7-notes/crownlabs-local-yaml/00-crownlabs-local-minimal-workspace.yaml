@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workspace-tea
+  labels:
+    crownlabs.polito.it/operator-selector: local
+---
+apiVersion: crownlabs.polito.it/v1alpha1
+kind: Workspace
+metadata:
+  name: tea
+  labels:
+    crownlabs.polito.it/operator-selector: local
+spec:
+  prettyName: Test workspace
+  quota:
+    cpu: "1"
+    memory: 2Gi
+    instances: 1

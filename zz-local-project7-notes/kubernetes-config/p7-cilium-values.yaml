@@ -1,0 +1,7 @@
+kubeProxyReplacement: true
+routingMode: tunnel
+tunnelProtocol: vxlan
+mtu: 1400
+bpf:
+  masquerade: false
+enableIPv4Masquerade: true
