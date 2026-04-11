@@ -88,6 +88,8 @@ lint-config: golangci-lint ## Verify golangci-lint linter configuration
 run-instance: generate ## Run the instance operator locally
 	go run cmd/instance-operator/main.go\
 				--namespace-whitelist=crownlabs.polito.it/operator-selector=local\
+				--metrics-addr=:8080\
+				--health-probe-bind-address=:8081\
 				--website-base-url=${DOMAIN}\
 				--instances-auth-url=crownlabs.polito.it/app/instances/auth\
 				--container-env-sidecars-tag=v0.14.5\
@@ -99,6 +101,8 @@ run-instance: generate ## Run the instance operator locally
 run-instance-automation: generate ## Run the instance automation controller locally
 	go run cmd/instance-automation/main.go\
 				--namespace-whitelist=crownlabs.polito.it/operator-selector=local\
+				--metrics-addr=:8083\
+				--health-probe-bind-address=:8082\
 				--container-env-sidecars-tag=v0.14.5\
 				--enable-instance-submission=false\
 				--enable-instance-termination=false\

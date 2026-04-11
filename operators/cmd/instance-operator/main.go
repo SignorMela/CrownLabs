@@ -68,6 +68,7 @@ func main() {
 	mirrorStorageClass := ""
 
 	metricsAddr := flag.String("metrics-addr", ":8080", "The address the metric endpoint binds to.")
+	healthProbeAddr := flag.String("health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	enableLeaderElection := flag.Bool("enable-leader-election", false,
 		"Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.")
 	maxConcurrentReconciles := flag.Int("max-concurrent-reconciles", 1, "The maximum number of concurrent Reconciles which can be run for the Instance controller")
@@ -116,7 +117,7 @@ func main() {
 		Scheme:                 scheme,
 		Metrics:                server.Options{BindAddress: *metricsAddr},
 		LeaderElection:         *enableLeaderElection,
-		HealthProbeBindAddress: ":8081",
+		HealthProbeBindAddress: *healthProbeAddr,
 		LivenessEndpointName:   "/healthz",
 		ReadinessEndpointName:  "/ready",
 	})
