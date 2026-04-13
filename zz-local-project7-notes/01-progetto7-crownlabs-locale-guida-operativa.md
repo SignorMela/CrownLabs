@@ -88,9 +88,9 @@ kubectl get crd | grep crownlabs.polito.it
 Applica i manifest minimi compatibili preparati per questo progetto:
 
 ```bash
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/00-crownlabs-local-minimal-workspace.yaml
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/01-crownlabs-local-minimal-tenant.yaml
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/00-crownlabs-local-minimal-workspace.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/01-crownlabs-local-minimal-tenant.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
 ```
 
 Nota importante su `quota.cpu`:
@@ -189,13 +189,13 @@ kubectl -n tenant-john-doe delete instancesnapshot green-tea-6831-snapshot --ign
 Re-apply del template locale (ora con `mountMyDriveVolume: false`):
 
 ```bash
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
 ```
 
 Se vuoi ricreare una sola istanza minimale pulita:
 
 ```bash
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/03-crownlabs-local-minimal-instance.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/03-crownlabs-local-minimal-instance.yaml
 ```
 
 ### 3.5.c CrashLoop comune: immagine non compatibile con policy non-root
@@ -214,9 +214,9 @@ Nel template minimale locale e' gia' applicata una scelta compatibile:
 Per aggiornare il cluster locale:
 
 ```bash
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/02-crownlabs-local-minimal-template.yaml
 kubectl -n tenant-john-doe delete instance green-tea-6831 --ignore-not-found
-kubectl apply -f /home/crownlabs/zz-local-project7-notes/crownlabs-local-yaml/03-crownlabs-local-minimal-instance.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/crownlabs-local-yaml/03-crownlabs-local-minimal-instance.yaml
 kubectl -n tenant-john-doe get pods -w
 ```
 
@@ -237,8 +237,8 @@ Questi errori non bloccano il progetto: usa il percorso safe (3.2 -> 3.5).
 
 Una volta su Modalita' B, applica il canary auth del progetto 7:
 
-- runbook pratico: `/home/crownlabs/zz-local-project7-notes/progetto7-gateway-auth-migrazione-pratica.md`
-- YAML examples: `/home/crownlabs/zz-local-project7-notes/gateway-auth-yaml-examples/`
+- runbook pratico: `/home/crownlabs/CrownLabs/zz-local-project7-notes/progetto7-gateway-auth-migrazione-pratica.md`
+- YAML examples: `/home/crownlabs/CrownLabs/zz-local-project7-notes/gateway-auth-yaml-examples/`
 
 Check Gateway:
 
@@ -252,7 +252,7 @@ kubectl get securitypolicy -A
 Se `Programmed=False AddressNotAssigned`, applica il pool LB Cilium gia' preparato:
 
 ```bash
-kubectl apply -f /home/crownlabs/kubernetes-config/cilium-lb-pool-p7-gw.yaml
+kubectl apply -f /home/crownlabs/CrownLabs/zz-local-project7-notes/kubernetes-config/cilium-lb-pool-p7-gw.yaml
 ```
 
 ---
@@ -315,7 +315,147 @@ Senza allineamento `redirect_uri` in Keycloak, il test auth da laptop puo' falli
 
 ---
 
-## 7) Go / No-Go
+## 7) Stato attuale + avvio rapido controller locali (host process)
+
+Questa sezione serve a rispondere subito alla domanda: "CrownLabs locale sta davvero girando tramite operator/controller?".
+
+### 7.0 Wrapper script consigliati (one-liner)
+
+Se vuoi evitare avvio manuale comando per comando:
+
+```bash
+/home/crownlabs/CrownLabs/zz-local-project7-notes/scripts/crownlabs-local/start-crownlabs-local.sh
+/home/crownlabs/CrownLabs/zz-local-project7-notes/scripts/crownlabs-local/status-crownlabs-local.sh
+/home/crownlabs/CrownLabs/zz-local-project7-notes/scripts/crownlabs-local/stop-crownlabs-local.sh
+```
+
+Documentazione script:
+
+- `/home/crownlabs/CrownLabs/zz-local-project7-notes/scripts/crownlabs-local/README.md`
+
+### 7.1 Check stato in 30 secondi
+
+```bash
+kubectl get crd | grep crownlabs.polito.it
+pgrep -af 'cmd/instance-operator/main.go|cmd/instance-automation/main.go' || true
+ss -ltnp | grep -E ':8080|:8081|:8082|:8083' || true
+```
+
+Interpretazione:
+
+- se non vedi processi `instance-operator` e `instance-automation`, i controller non stanno girando localmente;
+- se vedi porte 8080/8081 (instance-operator) e 8082/8083 (instance-automation), i due controller sono attivi.
+
+### 7.2 Avvio persistente consigliato (background)
+
+#### Instance Operator
+
+```bash
+cd /home/crownlabs/CrownLabs/operators
+nohup make run-instance >/tmp/crownlabs-run-instance.log 2>&1 &
+echo $!
+```
+
+#### Instance Automation
+
+`instance-automation` richiede sempre un file SMTP, anche con notifiche disabilitate.
+
+```bash
+mkdir -p /tmp/crownmail/mail-configs
+cat > /tmp/crownmail/mail-configs/smtp-config.yaml <<'EOF'
+smtpServer: "smtp.local"
+smtpPort: "587"
+smtpIdentity: ""
+smtpUsername: "local-user"
+smtpPassword: "local-pass"
+smtpFrom: "noreply@local"
+EOF
+
+cd /home/crownlabs/CrownLabs/operators
+nohup go run cmd/instance-automation/main.go \
+   --namespace-whitelist=crownlabs.polito.it/operator-selector=local \
+   --metrics-addr=:8083 \
+   --health-probe-bind-address=:8082 \
+   --container-env-sidecars-tag=v0.14.5 \
+   --enable-instance-submission=false \
+   --enable-instance-termination=false \
+   --enable-instance-inactive-termination=true \
+   --enable-instance-expiration=false \
+   --mail-template-dir=deploy/crownmail/mail-templates \
+   --mail-config-dir=/tmp/crownmail/mail-configs \
+   --enable-inactivity-notifications=false \
+   --enable-expiration-notifications=false \
+   >/tmp/crownlabs-run-instance-automation.log 2>&1 &
+echo $!
+```
+
+### 7.3 Verifica avvio
+
+```bash
+pgrep -af 'cmd/instance-operator/main.go|cmd/instance-automation/main.go'
+ss -ltnp | grep -E ':8080|:8081|:8082|:8083'
+sed -n '1,80p' /tmp/crownlabs-run-instance.log
+sed -n '1,80p' /tmp/crownlabs-run-instance-automation.log
+```
+
+### 7.4 Stop pulito
+
+```bash
+pkill -f 'cmd/instance-operator/main.go' || true
+pkill -f 'cmd/instance-automation/main.go' || true
+```
+
+### 7.5 Full stack locale (tenant/workspace/sharedvolume)
+
+Se vuoi coprire anche i controller Tenant/Workspace/SharedVolume nel locale, avvia l'operator unico su porte dedicate:
+
+```bash
+cd /home/crownlabs/CrownLabs/operators
+nohup go run cmd/operator/*.go \
+   --target-label=crownlabs.polito.it/operator-selector=local \
+   --enable-instance=false \
+   --enable-sharedvolume=true \
+   --enable-tenant=true \
+   --enable-workspace=true \
+   --enable-keycloak=false \
+   --enable-webhooks=false \
+   --metrics-addr=:8090 \
+   --health-probe-bind-address=:8091 \
+   --tenant-webhook-port=:8092 \
+   >/tmp/crownlabs-run-operator.log 2>&1 &
+echo $!
+```
+
+Check rapido:
+
+```bash
+pgrep -af 'cmd/operator/.*--metrics-addr=:8090' || true
+ss -ltnp | grep -E ':8090|:8091|:8092' || true
+sed -n '1,100p' /tmp/crownlabs-run-operator.log
+```
+
+Nota su MyDrive:
+
+- il tenant controller prova a creare PVC in `mydrive-pvcs`.
+- se il namespace non esiste, vedi retry con errore `namespaces "mydrive-pvcs" not found`.
+
+Fix minimo:
+
+```bash
+kubectl create namespace mydrive-pvcs --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Se la StorageClass `rook-nfs` non e' presente, il PVC MyDrive puo' restare `Pending`: non blocca l'avvio dei controller.
+
+Stop operator unico:
+
+```bash
+pkill -f 'cmd/operator/.*--metrics-addr=:8090' || true
+```
+
+---
+
+## 8) Go / No-Go
 
 Go solo se tutti questi check passano:
 
@@ -333,7 +473,7 @@ No-Go se:
 
 ---
 
-## 8) Comandi di cleanup locale
+## 9) Comandi di cleanup locale
 
 ```bash
 cd /home/crownlabs/CrownLabs/operators
