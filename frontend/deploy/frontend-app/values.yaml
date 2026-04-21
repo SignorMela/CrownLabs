@@ -49,8 +49,6 @@ service:
   type: ClusterIP
   port: 80
 
-
-
 gatewayApiMode: false
 
 ingress:
@@ -63,6 +61,8 @@ ingress:
 httproute:
   gateway:
     name: crownlabs-gw
+    namespace: envoy-gateway-system
+    sectionName: https
   hostname: crownlabs.example.com
   path: /
 

@@ -38,7 +38,21 @@ require (
 	kubevirt.io/api v1.2.0
 	kubevirt.io/containerized-data-importer-api v1.58.3
 	sigs.k8s.io/controller-runtime v0.21.0
+<<<<<<< HEAD
 	sigs.k8s.io/sig-storage-lib-external-provisioner/v13 v13.0.0
+=======
+	sigs.k8s.io/gateway-api v1.3.0
+)
+
+require (
+	github.com/blang/semver/v4 v4.0.0 // indirect
+	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
+	github.com/google/btree v1.1.3 // indirect
+	github.com/x448/float16 v0.8.4 // indirect
+	golang.org/x/sync v0.19.0 // indirect
+	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
+	sigs.k8s.io/randfill v1.0.0 // indirect
+>>>>>>> 106742c9 (Gateway API + Go BETA)
 )
 
 require (
@@ -46,6 +60,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+<<<<<<< HEAD
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -64,6 +79,15 @@ require (
 	github.com/go-openapi/swag/stringutils v0.24.0 // indirect
 	github.com/go-openapi/swag/typeutils v0.24.0 // indirect
 	github.com/go-openapi/swag/yamlutils v0.24.0 // indirect
+=======
+	github.com/emicklei/go-restful/v3 v3.12.0 // indirect
+	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/go-logr/stdr v1.2.2
+	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+	github.com/go-openapi/jsonreference v0.21.0 // indirect
+	github.com/go-openapi/swag v0.23.0 // indirect
+>>>>>>> 106742c9 (Gateway API + Go BETA)
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/btree v1.1.3 // indirect
@@ -88,10 +112,15 @@ require (
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
+<<<<<<< HEAD
 	github.com/x448/float16 v0.8.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.30.0 // indirect
+=======
+	go.uber.org/mock v0.5.2
+	golang.org/x/net v0.48.0
+>>>>>>> 106742c9 (Gateway API + Go BETA)
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect

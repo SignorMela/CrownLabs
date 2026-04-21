@@ -17,6 +17,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
 
 	crownlabsv1alpha1 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha1"
 	crownlabsv1alpha2 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha2"
@@ -55,6 +57,7 @@ func init() {
 
 	utilruntime.Must(virtv1.AddToScheme(scheme))
 	utilruntime.Must(cdiv1beta1.AddToScheme(scheme))
+	utilruntime.Must(gatewayv1.AddToScheme(scheme))
 }
 
 func main() {
@@ -62,6 +65,8 @@ func main() {
 	svcUrls := instctrl.ServiceUrls{}
 	instSnapOpts := instancesnapshot_controller.ContainersSnapshotOpts{}
 	publicExposureOpts := forge.PublicExposureOpts{}
+	expositionOpts := instctrl.ExpositionOpts{}
+	expositionCompat := true
 	publicExposureIPPoolRaw := ""
 	publicExposureCommonAnnotationRaw := ""
 	publicExposureCommonLabelsRaw := ""
@@ -98,6 +103,13 @@ func main() {
 	flag.StringVar(&publicExposureCommonAnnotationRaw, "public-exposure-common-annotations", "", "Comma-separated list of common annotations in format key1=val1,key2=val2")
 	flag.StringVar(&publicExposureCommonLabelsRaw, "public-exposure-common-labels", "", "Comma-separated list of common labels in format key1=val1,key2=val2")
 	flag.StringVar(&publicExposureOpts.LoadBalancerIPsKey, "public-exposure-loadbalancer-ips-key", "metallb.universe.tf/loadBalancerIPs", "Annotation key for specifying LoadBalancer IPs")
+	flag.StringVar((*string)(&expositionOpts.Mode), "exposition-mode", string(instctrl.ExpositionModeIngress), "Mode for GUI exposition resources: ingress|httproute")
+	flag.StringVar(&expositionOpts.IngressCertificateName, "exposition-ingress-certificate-name", forge.IngressDefaultCertificateName, "TLS certificate secret used for ingress mode")
+	flag.StringVar(&expositionOpts.GatewayName, "exposition-gateway-name", "crownlabs-gw", "Gateway name used for httproute mode")
+	flag.StringVar(&expositionOpts.GatewayNamespace, "exposition-gateway-namespace", "envoy-gateway-system", "Gateway namespace used for httproute mode")
+	flag.StringVar(&expositionOpts.GatewaySectionName, "exposition-gateway-section-name", "https", "Gateway listener section name used for httproute mode")
+	flag.StringVar(&expositionOpts.GatewayClassName, "exposition-gateway-class-name", "envoy-gateway", "GatewayClass name expected for the selected gateway (for configuration traceability)")
+	flag.BoolVar(&expositionCompat, "exposition-compat", true, "Enable exposition compatibility fallback when Gateway API resources are not available")
 
 	flag.StringVar(&mirrorStorageClass, "mirror-storage-class", "pvc-mirror", "The StorageClass to be used for all PVCs which are going to be mirrors")
 
@@ -153,8 +165,30 @@ func main() {
 	publicExposureOpts.IPPool = ipPool
 	publicExposureOpts.CommonAnnotations = commonAnnotations
 	publicExposureOpts.CommonLabels = commonLabels
+	expositionOpts.Compat = &expositionCompat
 
 	log.Info("Public exposure configuration", "ipPool", publicExposureOpts.IPPool, "commonAnnotations", publicExposureOpts.CommonAnnotations, "commonLabels", publicExposureOpts.CommonLabels, "loadBalancerIPsKey", publicExposureOpts.LoadBalancerIPsKey)
+
+	expositionOpts.Mode = instctrl.ExpositionMode(strings.ToLower(strings.TrimSpace(string(expositionOpts.Mode))))
+	switch expositionOpts.Mode {
+	case instctrl.ExpositionModeIngress:
+		if expositionOpts.IngressCertificateName == "" {
+			expositionOpts.IngressCertificateName = forge.IngressDefaultCertificateName
+		}
+	case instctrl.ExpositionModeHTTPRoute:
+		if expositionOpts.GatewayName == "" {
+			log.Error(fmt.Errorf("invalid empty gateway name"), "httproute mode requires exposition-gateway-name")
+			os.Exit(1)
+		}
+	default:
+		log.Error(fmt.Errorf("invalid exposition mode %q", expositionOpts.Mode), "accepted values are ingress or httproute")
+		os.Exit(1)
+	}
+
+	log.Info("Exposition configuration", "mode", expositionOpts.Mode, "ingressCertificateName", expositionOpts.IngressCertificateName,
+		"gatewayName", expositionOpts.GatewayName, "gatewayNamespace", expositionOpts.GatewayNamespace,
+		"gatewaySectionName", expositionOpts.GatewaySectionName, "gatewayClassName", expositionOpts.GatewayClassName,
+		"compat", expositionOpts.CompatEnabled())
 
 	// Configure the Instance controller
 	const instanceCtrlName = "Instance"

@@ -11,6 +11,15 @@ configurations:
     websiteBaseUrl: crownlabs.example.com
     instancesAuthUrl: https://crownlabs.example.com/auth
     mirrorStorageClass: pvc-mirror
+  exposition:
+    mode: ingress
+    compat: true
+    ingressCertificateName: crownlabs-ingress-secret
+    gateway:
+      name: crownlabs-gw
+      namespace: envoy-gateway-system
+      sectionName: https
+      className: envoy-gateway
   containerEnvironmentOptions:
     tag: ""
     websockifyImage: crownlabs/websockify
