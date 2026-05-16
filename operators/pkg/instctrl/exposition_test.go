@@ -36,7 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
 	clv1alpha2 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha2"
-	clctx "github.com/netgroup-polito/CrownLabs/operators/pkg/context"
+	clctx "github.com/netgroup-polito/CrownLabs/operators/pkg/clcontext"
 	"github.com/netgroup-polito/CrownLabs/operators/pkg/forge"
 	"github.com/netgroup-polito/CrownLabs/operators/pkg/instctrl"
 )
@@ -165,6 +165,10 @@ var _ = Describe("Generation of the exposition environment", func() {
 		NamespacedName: &serviceName, Object: &service, GroupResource: corev1.Resource("services"),
 		ExpectedSpecForger: func(inst *clv1alpha2.Instance, env *clv1alpha2.Environment, tmp *clv1alpha2.Template) interface{} {
 			svc := forge.ServiceSpec(inst, env, tmp)
+			// Normalise empty ports slice to nil to match fake client's representation
+			if len(svc.Ports) == 0 {
+				svc.Ports = nil
+			}
 			svc.ClusterIP = clusterIP
 			return svc
 		},
