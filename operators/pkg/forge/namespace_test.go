@@ -140,11 +140,14 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			forge.ConfigureTenantNamespace(namespace, tenant, labels)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
+			forge.ConfigureTenantNamespace(namespace, tenant, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
+			Expect(namespace.Labels).To(HaveKeyWithValue(allowedRoutesLabel.GetKey(), allowedRoutesLabel.GetValue()))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
+			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/instance-resources-replication", "true"))
 		})
@@ -168,12 +171,15 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			forge.ConfigureTenantNamespace(namespace, tenant, labels)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
+			forge.ConfigureTenantNamespace(namespace, tenant, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("existing-label", "existing-value"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
+			Expect(namespace.Labels).To(HaveKeyWithValue(allowedRoutesLabel.GetKey(), allowedRoutesLabel.GetValue()))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
+			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/instance-resources-replication", "true"))
 		})
@@ -216,11 +222,14 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			forge.ConfigureTenantNamespace(namespace, tenant, labels)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
+			forge.ConfigureTenantNamespace(namespace, tenant, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
+			Expect(namespace.Labels).To(HaveKeyWithValue(targetLabel.GetKey(), targetLabel.GetValue()))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
+			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/instance-resources-replication", "true"))
 		})
@@ -244,12 +253,15 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			forge.ConfigureTenantNamespace(namespace, tenant, labels)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
+			forge.ConfigureTenantNamespace(namespace, tenant, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("existing-label", "existing-value"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
+			Expect(namespace.Labels).To(HaveKeyWithValue(targetLabel.GetKey(), targetLabel.GetValue()))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
+			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/instance-resources-replication", "true"))
 		})

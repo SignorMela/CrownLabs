@@ -94,6 +94,7 @@ func setupTenant(
 		Client:                      mgr.GetClient(),
 		Scheme:                      mgr.GetScheme(),
 		TargetLabel:                 targetLabel,
+		AllowedRoutesLabel:          allowedRoutesLabel,
 		TenantNSKeepAlive:           tenantNSKeepAlive,
 		TriggerReconcileChannel:     make(chan event.GenericEvent, 10),
 		MyDrivePVCsSize:             mydrivePVCsSize.Quantity,
