@@ -120,8 +120,9 @@ func (r *Reconciler) enforcePersonalNamespace(
 	}
 
 	if _, err := controllerutil.CreateOrUpdate(ctx, r.Client, &ns, func() error {
-		// Configure the namespace
-		forge.ConfigureTenantNamespace(&ns, tn, forge.UpdateTenantResourceCommonLabels(ns.Labels, r.TargetLabel))
+		// Configure the namespace: compose all tenant namespace labels (including common ones)
+		labels := forge.TenantNamespaceLabels(ns.Labels, tn, r.TargetLabel, r.AllowedRoutesLabel)
+		forge.ConfigureTenantNamespace(&ns, tn, labels)
 
 		return controllerutil.SetControllerReference(tn, &ns, r.Scheme)
 	}); err != nil {

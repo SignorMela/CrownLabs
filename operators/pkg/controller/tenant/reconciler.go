@@ -50,6 +50,7 @@ type Reconciler struct {
 	client.Client
 	Scheme                      *runtime.Scheme
 	TargetLabel                 common.KVLabel
+	AllowedRoutesLabel          common.KVLabel
 	TenantNSKeepAlive           time.Duration
 	TriggerReconcileChannel     chan event.GenericEvent // Channel to trigger a reconciliation of the tenant resource.
 	MyDrivePVCsSize             resource.Quantity
