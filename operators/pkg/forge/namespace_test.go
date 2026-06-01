@@ -28,10 +28,10 @@ import (
 
 var _ = Describe("Namespace forging", func() {
 	var (
-		workspace           *v1alpha1.Workspace
-		labels              map[string]string
-		targetLabel         = common.NewLabel("test-target", "test-value")
-		allowedRoutesLabel  = common.NewLabel("crownlabs.polito.it/gw-access", "crownlabs-main-production")
+		workspace          *v1alpha1.Workspace
+		labels             map[string]string
+		targetLabel        = common.NewLabel("test-target", "test-value")
+		allowedRoutesLabel = common.NewLabel("crownlabs.polito.it/gw-access", "crownlabs-main-production")
 	)
 
 	BeforeEach(func() {
