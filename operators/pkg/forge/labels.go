@@ -261,7 +261,7 @@ func TenantLabels(labels map[string]string, tenant *clv1alpha2.Tenant, targetLab
 }
 
 // TenantNamespaceLabels receives in input a set of labels and returns the updated set for a tenant namespace.
-func TenantNamespaceLabels(labels map[string]string, tenant *clv1alpha2.Tenant, targetLabel, allowedRoutesLabel common.KVLabel) map[string]string {
+func TenantNamespaceLabels(labels map[string]string, tenant *clv1alpha2.Tenant, targetLabel, allowedRoutesLabel ctrlcommon.KVLabel) map[string]string {
 	labels = deepCopyLabels(labels)
 
 	labels = UpdateTenantResourceCommonLabels(labels, targetLabel)

@@ -117,7 +117,7 @@ func main() {
 	if err != nil {
 		klog.Fatal(err, "Unable to parse target label")
 	}
-	allowedRoutesLabel, err := common.ParseLabel(allowedRoutesLabelStr)
+	allowedRoutesLabel, err := ctrlcommon.ParseLabel(allowedRoutesLabelStr)
 	if err != nil {
 		klog.Fatal(err, "Unable to parse allowed routes label")
 	}

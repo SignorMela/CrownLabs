@@ -83,6 +83,7 @@ func setupTenant(
 	mgr manager.Manager,
 	log logr.Logger,
 	targetLabel ctrlcommon.KVLabel,
+	allowedRoutesLabel ctrlcommon.KVLabel,
 ) error {
 	var baseWorkspacesList []string
 	if tenantBaseWorkspaces != "" {

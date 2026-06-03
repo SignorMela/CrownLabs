@@ -22,13 +22,16 @@ import (
 
 	clv1alpha1 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha1"
 	clv1alpha2 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha2"
+	ctrlcommon "github.com/netgroup-polito/CrownLabs/operators/pkg/controller/common"
 	"github.com/netgroup-polito/CrownLabs/operators/pkg/forge"
 )
 
 var _ = Describe("Namespace forging", func() {
 	var (
-		workspace *clv1alpha1.Workspace
-		labels    map[string]string
+		workspace          *clv1alpha1.Workspace
+		labels             map[string]string
+		targetLabel        ctrlcommon.KVLabel
+		allowedRoutesLabel ctrlcommon.KVLabel
 	)
 
 	BeforeEach(func() {
@@ -45,6 +48,9 @@ var _ = Describe("Namespace forging", func() {
 			"key1": "value1",
 			"key2": "value2",
 		}
+
+		targetLabel = ctrlcommon.NewLabel("test-key", "test-value")
+		allowedRoutesLabel = ctrlcommon.NewLabel("allowed-routes-key", "allowed-routes-value")
 	})
 
 	Describe("The forge.GetWorkspaceNamespaceName function", func() {
