@@ -108,7 +108,7 @@ func (r *Reconciler) enforceMyDrivePVC(
 		if pvc.CreationTimestamp.IsZero() {
 			pvc.Spec = forge.MyDrivePVCSpec(r.MyDrivePVCsStorageClassName, r.MyDrivePVCsSize)
 		}
-		pvc.SetLabels(forge.UpdateTenantResourceCommonLabels(pvc.Labels, r.TargetLabel))
+		pvc.SetLabels(forge.UpdateTenantResourceCommonLabels(pvc.Labels, r.targetLabel()))
 		pvc.SetAnnotations(forge.UpdateMyDrivePVCAnnotations(pvc.Annotations, tn.Name))
 
 		// Update size only if it needs to be bigger
@@ -148,7 +148,7 @@ func (r *Reconciler) enforceMyDrivePVCMirror(
 		if mirrPvc.CreationTimestamp.IsZero() {
 			mirrPvc.Spec = forge.MirrorPVCSpec(pvc, r.MirrorPVCStorageClassName)
 		}
-		mirrPvc.SetLabels(forge.UpdateMyDriveMirrorPVCLabels(mirrPvc.Labels, r.TargetLabel))
+		mirrPvc.SetLabels(forge.UpdateMyDriveMirrorPVCLabels(mirrPvc.Labels, r.targetLabel()))
 
 		return ctrlutil.SetControllerReference(tn, &mirrPvc, r.Scheme)
 	})

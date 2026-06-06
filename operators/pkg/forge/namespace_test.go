@@ -28,10 +28,10 @@ import (
 
 var _ = Describe("Namespace forging", func() {
 	var (
-		workspace          *clv1alpha1.Workspace
-		labels             map[string]string
-		targetLabel        ctrlcommon.KVLabel
-		allowedRoutesLabel ctrlcommon.KVLabel
+		workspace             *clv1alpha1.Workspace
+		labels                map[string]string
+		targetLabel           ctrlcommon.KVLabel
+		tenantNamespaceLabels map[string]string
 	)
 
 	BeforeEach(func() {
@@ -50,7 +50,9 @@ var _ = Describe("Namespace forging", func() {
 		}
 
 		targetLabel = ctrlcommon.NewLabel("test-key", "test-value")
-		allowedRoutesLabel = ctrlcommon.NewLabel("allowed-routes-key", "allowed-routes-value")
+		tenantNamespaceLabels = map[string]string{
+			"allowed-routes-key": "allowed-routes-value",
+		}
 	})
 
 	Describe("The forge.GetWorkspaceNamespaceName function", func() {
@@ -146,12 +148,12 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
-			forge.ConfigureTenantNamespace(namespace, tenant, composed)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, tenantNamespaceLabels)
+			forge.ConfigureTenantNamespace(namespace, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
-			Expect(namespace.Labels).To(HaveKeyWithValue(allowedRoutesLabel.GetKey(), allowedRoutesLabel.GetValue()))
+			Expect(namespace.Labels).To(HaveKeyWithValue("allowed-routes-key", "allowed-routes-value"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
@@ -177,13 +179,13 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
-			forge.ConfigureTenantNamespace(namespace, tenant, composed)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, tenantNamespaceLabels)
+			forge.ConfigureTenantNamespace(namespace, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("existing-label", "existing-value"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
-			Expect(namespace.Labels).To(HaveKeyWithValue(allowedRoutesLabel.GetKey(), allowedRoutesLabel.GetValue()))
+			Expect(namespace.Labels).To(HaveKeyWithValue("allowed-routes-key", "allowed-routes-value"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/type", "tenant"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/tenant", "student"))
 			Expect(namespace.Labels).To(HaveKeyWithValue("crownlabs.polito.it/name", "student"))
@@ -228,8 +230,8 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
-			forge.ConfigureTenantNamespace(namespace, tenant, composed)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, tenantNamespaceLabels)
+			forge.ConfigureTenantNamespace(namespace, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("custom-label", "custom-value"))
@@ -259,8 +261,8 @@ var _ = Describe("Namespace forging", func() {
 				"custom-label": "custom-value",
 			}
 
-			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, allowedRoutesLabel)
-			forge.ConfigureTenantNamespace(namespace, tenant, composed)
+			composed := forge.TenantNamespaceLabels(labels, tenant, targetLabel, tenantNamespaceLabels)
+			forge.ConfigureTenantNamespace(namespace, composed)
 
 			Expect(namespace.Labels).ToNot(BeNil())
 			Expect(namespace.Labels).To(HaveKeyWithValue("existing-label", "existing-value"))
