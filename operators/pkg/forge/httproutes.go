@@ -47,7 +47,6 @@ type ExpositionConfig struct {
 	WebsiteBaseURL       string
 	InstancesAuthURL     string
 	EnableAuthentication bool
-	GatewayAPIMode       bool
 	GatewayName          string
 	GatewayNamespace     string
 }

@@ -5,7 +5,6 @@
 global:
   version: "" # default set while packaging
   gateway:
-    gatewayApiMode: true
     name: "crownlabs-main"
     hostname: crownlabs.example.com
     securityPolicy:
@@ -37,9 +36,6 @@ frontend-app:
   replicaCount: 1
   image:
     repository: crownlabs/frontend-app
-  ingress:
-    hostname: crownlabs.example.com
-    path: /
   configuration:
     backend:
       graphql: /graph
@@ -64,8 +60,6 @@ qlkube:
   image:
     repository: crownlabs/qlkube
   rbacResourcesName: crownlabs-qlkube
-  ingress:
-    hostname: crownlabs.example.com
   harborToken: {}
   configuration:
     exposedAPIs:
@@ -257,10 +251,8 @@ instance-operator:
 
     monitoring:
       prometheusURL: http://kube-prometheus-stack-prometheus.monitoring:9090
-      queryNginxAvailable: count(up{service="ingress-nginx-external-controller-metrics"})
       queryBastionSSHAvailable: count(up{container="bastion-operator-tracker-sidecar"})
       queryWebSSHAvailable: count(up{container="webssh"})
-      queryNginxData: nginx_ingress_controller_requests{exported_namespace="%s", exported_service=~"%s.*"}
       queryBastionSSHData: bastion_ssh_connections{destination_ip="%s"}
       queryWebSSHData: bastion_web_ssh_connections{destination_ip="%s"}
       queryStep: 30s
@@ -307,15 +299,7 @@ bastion:
 
   webssh:
     expositionEnabled: true
-    ingress:
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
-      hostname: crownlabs.example.com
-      path: /webssh
-      pathType: Prefix
 
-# Gateway API core resources are rendered when gatewayAPI.enabled=true.
-# Application migration (Ingress vs HTTPRoute) remains controlled per app.
 gatewayAPI:
   # name: crownlabs-main
   class: envoy-public

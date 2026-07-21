@@ -70,7 +70,6 @@ func main() {
 	publicExposureCommonLabelsRaw := ""
 	mirrorStorageClass := ""
 	enableAuth := true
-	gatewayAPIMode := false
 	gatewayAPIRefsValues := ""
 
 	metricsAddr := flag.String("metrics-addr", ":8080", "The address the metric endpoint binds to.")
@@ -104,7 +103,6 @@ func main() {
 	flag.StringVar(&mirrorStorageClass, "mirror-storage-class", "pvc-mirror", "The StorageClass to be used for all PVCs which are going to be mirrors")
 
 	flag.BoolVar(&enableAuth, "enable-auth", true, "Enable adding authentication on the exposed resources")
-	flag.BoolVar(&gatewayAPIMode, "gateway-api-mode", false, "Enable the use of Gateway API for public exposure instead of Ingress")
 	flag.StringVar(&gatewayAPIRefsValues, "gateway-api-refs-values", "", "Gateway minimal informations for route binding, in format namespace/name")
 
 	restcfg.InitFlags(nil)
@@ -177,21 +175,15 @@ func main() {
 		log.Error(err, "no path provided for webssh public key")
 	}
 
-	// Populate exposition/gateway fields from flags
+	// Populate exposition fields from flags
 	expositionCfg.EnableAuthentication = enableAuth
-	expositionCfg.GatewayAPIMode = gatewayAPIMode
-	log.Info("Gateway API mode selection", "enabled", gatewayAPIMode)
-	if gatewayAPIMode {
-		gwNs, gwName, err := forge.ParseNamespacedName(gatewayAPIRefsValues)
-		if err != nil {
-			log.Error(err, "invalid gateway parent format, expected 'namespace/name'")
-			os.Exit(1)
-		}
-		expositionCfg.GatewayName = gwName
-		expositionCfg.GatewayNamespace = gwNs
-	} else if gatewayAPIRefsValues != "" {
-		log.Info("Gateway parent provided but Gateway API mode is disabled")
+	gwNs, gwName, err := forge.ParseGatewayParent(gatewayAPIRefsValues)
+	if err != nil {
+		log.Error(err, "invalid gateway parent format, expected 'namespace/name'")
+		os.Exit(1)
 	}
+	expositionCfg.GatewayName = gwName
+	expositionCfg.GatewayNamespace = gwNs
 
 	if err = (&instctrl.InstanceReconciler{
 		Client:                    mgr.GetClient(),

@@ -312,7 +312,6 @@ func (r *InstanceReconciler) enforceEnvironments(ctx context.Context) error {
 		}
 	}
 	if urlNeeded {
-		// Enforce the ingress to access the GUI
 		// Use the configured website base URL
 		host := r.ExpositionConfig.WebsiteBaseURL
 

@@ -2,6 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+global:
+  gateway: {}
+
 replicaCount: 1
 replicaCountAutomation: 1
 
@@ -11,7 +14,6 @@ configurations:
     # websiteBaseUrl: crownlabs.example.com # defaults to global.gateway.hostname
     instancesAuthUrl: https://crownlabs.example.com/auth
     mirrorStorageClass: pvc-mirror
-    # gatewayApiMode: false # defaults to global.gateway.gatewayApiMode
     # gatewayApiRefsValues: "crownlabs-production/crownlabs-main" # defaults to .Release.Namespace/global.gateway.name
   containerEnvironmentOptions:
     tag: ""
@@ -113,6 +115,3 @@ webssh:
     keyName: webssh-master
 
 rbacResourcesName: crownlabs-instance-operator
-
-global:
-  gateway: {}

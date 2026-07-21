@@ -80,7 +80,6 @@ var _ = BeforeSuite(func() {
 			WebsiteBaseURL:       "fakesite.com",
 			InstancesAuthURL:     "fake.com/auth",
 			EnableAuthentication: true,
-			GatewayAPIMode:       false,
 			GatewayName:          "fake-gw",
 			GatewayNamespace:     "fake-gw-ns",
 		},
