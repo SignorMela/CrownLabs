@@ -78,7 +78,6 @@ var _ = BeforeSuite(func() {
 		ReconcileDeferHook: GinkgoRecover,
 		ExpositionConfig: forge.ExpositionConfig{
 			WebsiteBaseURL:       "fakesite.com",
-			InstancesAuthURL:     "fake.com/auth",
 			EnableAuthentication: true,
 			GatewayName:          "fake-gw",
 			GatewayNamespace:     "fake-gw-ns",

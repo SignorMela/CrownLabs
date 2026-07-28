@@ -12,7 +12,6 @@ configurations:
   generic:
     whitelistLabels: crownlabs.polito.it/operator-selector=production
     # websiteBaseUrl: crownlabs.example.com # defaults to global.gateway.hostname
-    instancesAuthUrl: https://crownlabs.example.com/auth
     mirrorStorageClass: pvc-mirror
     # gatewayApiRefsValues: "crownlabs-production/crownlabs-main" # defaults to .Release.Namespace/global.gateway.name
   containerEnvironmentOptions:
