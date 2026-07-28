@@ -177,7 +177,7 @@ func main() {
 
 	// Populate exposition fields from flags
 	expositionCfg.EnableAuthentication = enableAuth
-	gwNs, gwName, err := forge.ParseGatewayParent(gatewayAPIRefsValues)
+	gwNs, gwName, err := forge.ParseNamespacedName(gatewayAPIRefsValues)
 	if err != nil {
 		log.Error(err, "invalid gateway parent format, expected 'namespace/name'")
 		os.Exit(1)
