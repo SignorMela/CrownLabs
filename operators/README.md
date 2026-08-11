@@ -56,7 +56,9 @@ helm upgrade crownlabs-instance-operator deploy/instance-operator \
 Based on [Kubebuilder 2.3](https://github.com/kubernetes-sigs/kubebuilder.git), the operator implements the environment creation logic of CrownLabs.
 
 The next picture shows the general architecture of the Instance Operator.
-On the left you can see the controller (in blue) and the two CRDs used to describe the desired status (in green) and better detailed below. On the right it is possible to view the set of resources that are created for each environment. It is divided into two parts, one representing the components that are created only in the persistent case (that will be analyzed in the _Persistent Feature_ section), while the other one is the set of resources created in both scenarios (i.e. the VirtualMachine Instance itself and the components useful to connect to it, e.g. secret, service, and HTTPRoute or Ingress).
+On the left you can see the controller (in blue) and the two CRDs used to describe the desired status (in green) and better detailed below.
+On the right you can see the set of resources that are created for each environment.
+It is divided into two parts, one representing the components that are created only in the persistent case (that will be analyzed in the _Persistent Feature_ section), while the other one is the set of resources created in both scenarios (i.e. the VirtualMachine Instance itself and the components useful to connect to it, e.g. secret, service, and HTTPRoute or Ingress).
 
 ![Instance Operator Architecture](../documentation/instance-operator.svg)
 
@@ -89,7 +91,9 @@ To abstract the differences between Ingress and HTTPRoute, all internal GUI expo
 * `ExpositionGuiStatusInstanceURL`: composes the root instance URL.
 
 ##### Controller & Reconciler Logic
-The support for Gateway API resources (such as `HTTPRoute`) was implemented by extending the pre-existing reconciliation builder (`ctrl.NewControllerManagedBy(mgr)` in `SetupWithManager`) rather than introducing a separate Gateway-API builder. When `--gateway-api-mode` is enabled, Gateway API resources are conditionally registered to the controller builder (`bld.Owns(&gatewayv1.HTTPRoute{})`). This establishes a controller reference, ensuring that any modifications to the exposed resources in the cluster automatically trigger a reconciliation loop in the operator to restore the correct deployment state.
+The support for Gateway API resources (such as `HTTPRoute`) was implemented by extending the pre-existing reconciliation builder (`ctrl.NewControllerManagedBy(mgr)` in `SetupWithManager`) rather than introducing a separate Gateway-API builder.
+When `--gateway-api-mode` is enabled, Gateway API resources are conditionally registered to the controller builder (`bld.Owns(&gatewayv1.HTTPRoute{})`).
+This establishes a controller reference, ensuring that any modifications to the exposed resources in the cluster automatically trigger a reconciliation loop in the operator to restore the correct deployment state.
 
 ##### Exposition Accepted Status (`expositionAccepted`)
 The Instance Custom Resource Definition (CRD) includes the boolean status field `expositionAccepted` under each environment in `.status.environments[].expositionAccepted`.
@@ -97,7 +101,10 @@ The Instance Custom Resource Definition (CRD) includes the boolean status field 
 * **Troubleshooting**: A status of `false` does not necessarily mean a platform failure. For example, in environments connecting via WebSSH Bastion where a public URL is absent, `false` is acceptable. However, if a public URL is present and `expositionAccepted` remains `false`, it indicates a listener mismatch, missing labels, or configuration issue that requires troubleshooting.
 
 ##### Dynamic Environment IP Resolution
-To maintain an accurate internal state, the Instance Operator dynamically resolves the actual IP address of the underlying Pod or Virtual Machine Instance (VMI). This IP is stored in the `Instance` status (`status.environments[].ip`). During reconciliation, the operator filters out Pods that are terminating (`DeletionTimestamp != nil`) or in a terminal phase (`Failed`/`Succeeded`). This guarantees that the IP exposed in the status always points to the active workload, which is crucial for routing SSH connections through the Bastion and for reliable activity tracking via Prometheus.
+To maintain an accurate internal state, the Instance Operator dynamically resolves the actual IP address of the underlying Pod or Virtual Machine Instance (VMI).
+This IP is stored in the `Instance` status (`status.environments[].ip`).
+During reconciliation, the operator filters out Pods that are terminating (`DeletionTimestamp != nil`) or in a terminal phase (`Failed`/`Succeeded`).
+This guarantees that the IP exposed in the status always points to the active workload, which is crucial for routing SSH connections through the Bastion and for reliable activity tracking via Prometheus.
 
 
 ### APIs/CRDs
