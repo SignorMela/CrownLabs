@@ -69,7 +69,6 @@ func main() {
 	publicExposureCommonAnnotationRaw := ""
 	publicExposureCommonLabelsRaw := ""
 	mirrorStorageClass := ""
-	enableAuth := true
 	gatewayAPIRefsValues := ""
 
 	metricsAddr := flag.String("metrics-addr", ":8080", "The address the metric endpoint binds to.")
@@ -101,7 +100,6 @@ func main() {
 
 	flag.StringVar(&mirrorStorageClass, "mirror-storage-class", "pvc-mirror", "The StorageClass to be used for all PVCs which are going to be mirrors")
 
-	flag.BoolVar(&enableAuth, "enable-auth", true, "Enable adding authentication on the exposed resources")
 	flag.StringVar(&gatewayAPIRefsValues, "gateway-api-refs-values", "", "Gateway minimal informations for route binding, in format namespace/name")
 
 	restcfg.InitFlags(nil)
@@ -175,7 +173,6 @@ func main() {
 	}
 
 	// Populate exposition fields from flags
-	expositionCfg.EnableAuthentication = enableAuth
 	gwNs, gwName, err := forge.ParseNamespacedName(gatewayAPIRefsValues)
 	if err != nil {
 		log.Error(err, "invalid gateway parent format, expected 'namespace/name'")

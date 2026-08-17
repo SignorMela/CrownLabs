@@ -75,7 +75,6 @@ The Instance Operator exposes VM and container instances through Gateway API `HT
 ##### Runtime Configuration Flags
 The Instance Operator behavior is configured through the following runtime command-line flags:
 * `--gateway-api-refs-values`: Specifies the target Gateway reference in `<gateway-namespace>/<gateway-name>` format (e.g., `crownlabs-production/crownlabs-main`). The operator parses this string to extract the target namespace and name to populate the `parentRef` field of the `HTTPRoute`. Note that this is a **strictly syntactic parser**: it only validates the format (the presence of the slash separator) but performs no semantic checks. It does not verify if the specified namespace or Gateway actually exist in the cluster. This avoids hardcoding internal names and guarantees maximum flexibility and decoupling from the Gateway's lifecycle.
-* `--enable-auth`: Enables (`true`) or disables (`false`) the enforcement of authentication on the exposed resources via the Gateway API.
 
 ##### Exposition Enablement Mechanics
 To manage the exposure state of services dynamically without destroying or recreating the underlying workloads, CrownLabs uses toggle mechanisms:
